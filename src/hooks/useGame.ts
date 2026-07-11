@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { GameState, Target, Team } from '../types'
+import type { GameState, ScoreHistoryEntry, Target, Team } from '../types'
 
 const STORAGE_KEY = 'truco.current-game.v1'
 
@@ -8,6 +8,7 @@ const EMPTY_GAME: GameState = {
   us: 0,
   them: 0,
   winner: null,
+  history: [],
 }
 
 function isTarget(value: unknown): value is Target {
@@ -16,6 +17,36 @@ function isTarget(value: unknown): value is Target {
 
 function isTeam(value: unknown): value is Team {
   return value === 'us' || value === 'them'
+}
+
+function isDelta(value: unknown): value is 1 | -1 {
+  return value === 1 || value === -1
+}
+
+function restoreHistory(value: unknown, target: Target): ScoreHistoryEntry[] {
+  if (!Array.isArray(value)) return []
+
+  return value.flatMap((entry): ScoreHistoryEntry[] => {
+    if (!entry || typeof entry !== 'object') return []
+
+    const item = entry as Partial<ScoreHistoryEntry>
+    const score = item.score
+    if (
+      typeof item.id !== 'string' ||
+      !isTeam(item.team) ||
+      !isDelta(item.delta) ||
+      typeof score !== 'number' ||
+      !Number.isInteger(score) ||
+      score < 0 ||
+      score > target ||
+      typeof item.at !== 'number' ||
+      !Number.isFinite(item.at)
+    ) {
+      return []
+    }
+
+    return [{ id: item.id, team: item.team, delta: item.delta, score, at: item.at }]
+  })
 }
 
 function restoreGame(): GameState {
@@ -36,6 +67,7 @@ function restoreGame(): GameState {
       us: Math.min(us, target),
       them: Math.min(them, target),
       winner,
+      history: restoreHistory(parsed.history, target),
     }
   } catch {
     return EMPTY_GAME
@@ -50,7 +82,7 @@ export function useGame() {
   }, [game])
 
   const start = useCallback((target: Target) => {
-    setGame({ target, us: 0, them: 0, winner: null })
+    setGame({ target, us: 0, them: 0, winner: null, history: [] })
   }, [])
 
   const reset = useCallback(() => {
@@ -59,6 +91,7 @@ export function useGame() {
       us: 0,
       them: 0,
       winner: null,
+      history: [],
     }))
   }, [])
 
@@ -74,10 +107,20 @@ export function useGame() {
       const nextScore = Math.max(0, Math.min(current.target, currentScore + delta))
       if (nextScore === currentScore) return current
 
+      const now = Date.now()
+      const entry: ScoreHistoryEntry = {
+        id: `${now}-${team}-${delta}-${current.history.length}`,
+        team,
+        delta,
+        score: nextScore,
+        at: now,
+      }
+
       return {
         ...current,
         [team]: nextScore,
         winner: nextScore >= current.target ? team : null,
+        history: [...current.history, entry],
       }
     })
   }, [])

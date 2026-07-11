@@ -53,6 +53,16 @@ export function InfoIcon(props: IconProps) {
   )
 }
 
+export function HistoryIcon(props: IconProps) {
+  return (
+    <svg {...baseProps} {...props}>
+      <path d="M12 7v5l3 2" />
+      <path d="M5.2 8.2A8 8 0 1 1 4 12" />
+      <path d="M3.5 5.5v4h4" />
+    </svg>
+  )
+}
+
 export function ShareIcon(props: IconProps) {
   return (
     <svg {...baseProps} {...props}>

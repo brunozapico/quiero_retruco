@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { InfoIcon, RefreshIcon, ShareIcon, HomeIcon, VolumeIcon, VolumeOffIcon } from './components/Icons'
+import { HistoryIcon, InfoIcon, RefreshIcon, ShareIcon, HomeIcon, VolumeIcon, VolumeOffIcon } from './components/Icons'
 import { Modal } from './components/Modal'
 import { ScorePanel } from './components/ScorePanel'
 import { useGame } from './hooks/useGame'
 import { triggerFeedback } from './lib/feedback'
-import type { Target, Team } from './types'
+import type { ScoreHistoryEntry, Target, Team } from './types'
 import './styles.css'
 
 type AnimationState = Record<Team, 'up' | 'down' | null>
@@ -20,12 +20,22 @@ function isStandalone(): boolean {
   return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true
 }
 
+function formatHistoryTime(timestamp: number): string {
+  return new Intl.DateTimeFormat('es-AR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).format(timestamp)
+}
+
 export default function App() {
   const { game, start, reset, clear, changeScore } = useGame()
   const [soundEnabled, setSoundEnabled] = useState(restoreSoundPreference)
   const [animation, setAnimation] = useState<AnimationState>({ us: null, them: null })
   const [showReset, setShowReset] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
   const [showTargetChange, setShowTargetChange] = useState(false)
   const [standalone, setStandalone] = useState(isStandalone)
 
@@ -45,10 +55,12 @@ export default function App() {
     if (game.winner === 'them') return 'Ellos'
     return null
   }, [game.winner])
+  const historyCountLabel = game.history.length === 1 ? '1 movimiento' : `${game.history.length} movimientos`
 
   const selectTarget = (target: Target) => {
     start(target)
     setShowTargetChange(false)
+    setShowHistory(false)
     triggerFeedback('add', soundEnabled)
   }
 
@@ -64,12 +76,14 @@ export default function App() {
   const handleReset = () => {
     reset()
     setShowReset(false)
+    setShowHistory(false)
     triggerFeedback('subtract', soundEnabled)
   }
 
   const handleNewTarget = () => {
     clear()
     setShowReset(false)
+    setShowHistory(false)
   }
 
   if (!game.target) {
@@ -109,8 +123,6 @@ export default function App() {
           </div>
         </section>
 
-        <footer className="setup-screen__footer">Sin cuentas · sin historial</footer>
-
         <InfoModal open={showInfo} standalone={standalone} onClose={() => setShowInfo(false)} />
       </main>
     )
@@ -131,6 +143,15 @@ export default function App() {
         </button>
 
         <div className="app-header__actions">
+          <button
+            className="icon-button history-button"
+            type="button"
+            onClick={() => setShowHistory(true)}
+            aria-label={`Historial de puntos. ${historyCountLabel}`}
+          >
+            <HistoryIcon />
+            {game.history.length > 0 ? <span className="history-button__count">{game.history.length}</span> : null}
+          </button>
           <button
             className="icon-button"
             type="button"
@@ -205,13 +226,53 @@ export default function App() {
           <p>{game.us} — {game.them}</p>
         </div>
         <div className="modal-actions modal-actions--stacked">
+          <button className="button button--ghost" type="button" onClick={() => setShowHistory(true)}>Ver historial</button>
           <button className="button button--primary" type="button" onClick={handleReset}>Revancha</button>
           <button className="button button--ghost" type="button" onClick={handleNewTarget}>Cambiar puntos</button>
         </div>
       </Modal>
 
       <InfoModal open={showInfo} standalone={standalone} onClose={() => setShowInfo(false)} />
+      <HistoryModal history={game.history} open={showHistory} onClose={() => setShowHistory(false)} />
     </main>
+  )
+}
+
+interface HistoryModalProps {
+  history: ScoreHistoryEntry[]
+  open: boolean
+  onClose: () => void
+}
+
+function HistoryModal({ history, open, onClose }: HistoryModalProps) {
+  const orderedHistory = [...history].reverse()
+
+  return (
+    <Modal open={open} title="Historial de puntos" onClose={onClose}>
+      {orderedHistory.length === 0 ? (
+        <p className="history-empty">Todavía no se sumaron ni restaron puntos en esta partida.</p>
+      ) : (
+        <ol className="history-list" aria-label="Movimientos de la partida">
+          {orderedHistory.map((entry) => {
+            const teamLabel = entry.team === 'us' ? 'Nosotros' : 'Ellos'
+            const actionLabel = entry.delta > 0 ? 'sumó' : 'restó'
+
+            return (
+              <li className={`history-item history-item--${entry.team}`} key={entry.id}>
+                <span className="history-item__mark">{entry.delta > 0 ? '+' : '-'}</span>
+                <div className="history-item__main">
+                  <p><strong>{teamLabel}</strong> {actionLabel} 1 punto</p>
+                  <span>{formatHistoryTime(entry.at)}</span>
+                </div>
+                <span className="history-item__score">{entry.score}</span>
+              </li>
+            )
+          })}
+        </ol>
+      )}
+
+      <p className="modal-footnote">El historial se borra al reiniciar la partida o cambiar la modalidad.</p>
+    </Modal>
   )
 }
 
@@ -225,7 +286,7 @@ function InfoModal({ open, standalone, onClose }: InfoModalProps) {
   return (
     <Modal open={open} title="Acerca de la app" onClose={onClose}>
       <p className="modal-copy">
-        Guarda únicamente la partida en curso en este dispositivo. No crea cuentas ni conserva historial.
+        Guarda únicamente la partida en curso y su historial en este dispositivo. No crea cuentas ni conserva partidas anteriores.
       </p>
 
       {standalone ? (

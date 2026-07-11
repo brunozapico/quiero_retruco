@@ -293,6 +293,29 @@ button:disabled {
   gap: 7px;
 }
 
+.history-button {
+  position: relative;
+}
+
+.history-button__count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: grid;
+  min-width: 18px;
+  height: 18px;
+  place-items: center;
+  padding: 0 5px;
+  border: 1px solid rgba(8, 10, 15, 0.78);
+  border-radius: 999px;
+  color: #18140d;
+  background: var(--gold-soft);
+  font-size: 10px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
 .target-pill {
   min-height: 42px;
   padding: 0 16px;
@@ -585,6 +608,99 @@ button:disabled {
 
 .target-grid--modal .target-card {
   min-height: 125px;
+}
+
+.history-empty {
+  margin: 18px 0 0;
+  padding: 18px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  color: #a7a8ac;
+  background: rgba(255, 255, 255, 0.025);
+  font-size: 14px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.history-list {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-item {
+  display: grid;
+  grid-template-columns: 38px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 10px 12px 10px 10px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.history-item__mark {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 14px;
+  color: var(--gold-soft);
+  background: rgba(217, 184, 108, 0.11);
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.history-item--them .history-item__mark {
+  color: #e0e1e4;
+  background: rgba(202, 205, 214, 0.075);
+}
+
+.history-item__main {
+  min-width: 0;
+}
+
+.history-item__main p {
+  margin: 0;
+  overflow: hidden;
+  color: #deddd8;
+  font-size: 14px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-item__main strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.history-item__main span {
+  display: block;
+  margin-top: 4px;
+  color: #73757d;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  letter-spacing: 0.05em;
+}
+
+.history-item__score {
+  min-width: 34px;
+  color: var(--gold-soft);
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  text-align: right;
+}
+
+.history-item--them .history-item__score {
+  color: #e0e1e4;
 }
 
 .winner-content {
