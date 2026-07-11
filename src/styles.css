@@ -125,18 +125,11 @@ button:disabled {
 }
 
 .brand-mark {
-  display: grid;
   width: 42px;
   height: 42px;
-  place-items: center;
-  border: 1px solid rgba(217, 184, 108, 0.34);
-  border-radius: 14px;
-  background: linear-gradient(145deg, rgba(217, 184, 108, 0.16), rgba(255, 255, 255, 0.02));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  color: var(--gold-soft);
-  font-family: Georgia, serif;
-  font-size: 22px;
-  font-weight: 700;
+  border-radius: 13px;
+  object-fit: cover;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
 }
 
 .icon-button {

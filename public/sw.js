@@ -1,5 +1,13 @@
-const CACHE = 'truco-v1.0.1'
-const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest', '/apple-touch-icon.png', '/icons/icon-192.png', '/icons/icon-512.png']
+const CACHE = 'quieroretruco-v1.0.2'
+const APP_SHELL = [
+  '/',
+  '/index.html',
+  '/manifest.webmanifest',
+  '/apple-touch-icon.png',
+  '/icons/app-logo.png',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+]
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(APP_SHELL)))

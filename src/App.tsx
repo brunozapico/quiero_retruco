@@ -93,9 +93,7 @@ export default function App() {
         <div className="ambient ambient--two" aria-hidden="true" />
 
         <header className="setup-screen__topbar">
-          <div className="brand-mark" aria-hidden="true">
-            <span>T</span>
-          </div>
+          <img className="brand-mark" src="/icons/app-logo.png" alt="QuieroReTruco" />
           <button className="icon-button" type="button" onClick={() => setShowInfo(true)} aria-label="Información">
             <InfoIcon />
           </button>
