@@ -33,6 +33,7 @@ La aplicación no requiere cuentas, backend ni conexión permanente. El estado d
 - CSS nativo para estilos, animaciones y diseño responsive.
 - Web Audio API para el feedback sonoro.
 - Service Worker y Web App Manifest propios para la experiencia PWA y offline.
+- Vercel Web Analytics para métricas de visitas.
 - Vercel para el despliegue.
 
 ## Estructura del proyecto
@@ -112,4 +113,6 @@ Una vez cargada por primera vez, la aplicación puede abrirse sin conexión desd
 
 ## Privacidad
 
-QuieroReTruco funciona completamente del lado del cliente. No usa analytics, cookies de seguimiento, base de datos, autenticación ni APIs externas. La partida actual y la preferencia de sonido se almacenan únicamente en el navegador del usuario.
+QuieroReTruco funciona completamente del lado del cliente y no usa cookies de seguimiento, base de datos ni autenticación. La partida actual y la preferencia de sonido se almacenan únicamente en el navegador del usuario.
+
+La aplicación utiliza Vercel Web Analytics para obtener métricas agregadas de visitas y uso del sitio. Esta medición no accede al marcador ni al historial de la partida.
