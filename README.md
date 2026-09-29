@@ -116,3 +116,7 @@ Una vez cargada por primera vez, la aplicación puede abrirse sin conexión desd
 QuieroReTruco funciona completamente del lado del cliente y no usa cookies de seguimiento, base de datos ni autenticación. La partida actual y la preferencia de sonido se almacenan únicamente en el navegador del usuario.
 
 La aplicación utiliza Vercel Web Analytics para obtener métricas agregadas de visitas y uso del sitio. Esta medición no accede al marcador ni al historial de la partida.
+
+## Licencia
+
+Este proyecto se distribuye bajo la [Licencia MIT](LICENSE). Podés usarlo, modificarlo y distribuirlo libremente respetando sus condiciones.
